@@ -1,3 +1,3 @@
-# interview_questions
-interview_questions  
-git@github.com:yunkaiyueming/interview_questions.git  
+# interview
+interview
+git@github.com:yunkaiyueming/interview.git  
