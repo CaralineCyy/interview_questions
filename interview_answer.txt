@@ -31,6 +31,7 @@ Linux：
 
 专业前端
 1. ajax的请求是同步异步选项怎么设置？同步和异步有什么区别？
+	ajax请求是为了实现局部刷新而出现的(良好的用户体验)。而同步则是整体刷新的
 	async([əˈsɪŋk])：要求为Boolean类型的参数，默认设置为true，所有请求均为异步请求。如果需要发送同步请求，请将此选项设置为false。注意，同步请求将锁住浏览器，用户其他操作必须等待请求完成才可以执行。异步时，就是说当ajax发送请求后，在等待server端返回的这个过程中，前台会继续 执行ajax块后面的脚本，直到server端返回正确的结果才会去执行success，也就是说这时候执行的是两个线程，ajax块发出请求后一个线程 和ajax块后面的脚本（另一个线程）
 
 2. 你做的页面在哪些浏览器测试过？这些浏览器的内核分别是什么?
@@ -72,25 +73,34 @@ Linux：
 
 7. 谈谈你对闭包的理解，闭包的好处和坏处；
 
-
 8. 介绍CSS盒模型
 
-
 9. js怎么实现定时功能？js刷新页面有哪些方法？
-
-
-10. 主流的浏览器有哪些？内核都是什么？
-
-
+    定时任务：
+		使用setInterval()函数按照指定的周期（以毫秒计）来调用函数或计算表达式
+		<script language=javascript>
+	    var int=self.setInterval("clock()",50)
+	      function clock()
+	  	 {
+	 		 var t=new Date()
+	 		 document.getElementById("clock").value=t
+		  }
+		</script>
+	js刷新页面：
+		location.reload()
+		location.replace(URL)
+		location.href
+	
 11. 说说你用过的前端开发工具有哪些？
 	sublimeText
 	firebug
 
 
 12. 前端页面有哪三层构成，分别是什么？作用是什么？
-	M:Model
-	V:View
-	C:Control
+	HTML:html负责呈现内容
+	CSS:CSS负责页面布局
+	JS:通过操作DOM改变页面展现。
+
 
 13. 谈谈你对SEO的理解。
  	SEO(搜索引擎优化):
@@ -121,6 +131,12 @@ Linux：
 	View:数据展示
 	主要是：控制器从模型中获取数据，然后进行相关业务逻辑处理，将其展示给前端视图的过程
 
+	M:Model 模型
+	V:View  视图
+	C:Contronls 控制器
+	控制器负责把从模型获取到的数据进行逻辑处理，处理完成之后，交给前端视图展示。
+	这样的处理方式，把后台逻辑，数据，与前台的视图展示分离开来，各思其职。当前端展示变化的时候，后台的逻辑处理是不用随之改动的。
+
 3. 谈谈你觉得做的不错系统，大概介绍下用到了哪些技术？？？
 	技术：jquery库, 单点登录(统一验证登录)，highchart图形库，第三方登录(QQ登录),session共享
 
@@ -144,11 +160,11 @@ Linux：
 	状态码，tcp/ip协议通信的三次握手，请求头，响应头信息。
 
 7. 数据库优化经验
-	1. 数据库配置是否最优，每次调整一个参数进行测试，记录慢查询日志
+	1. 数据库配置是否最优，每次调整一个参数进行测试(explain)，记录慢查询日志(检查是否开启慢查询，开启慢查询(在mysql的配置文件中))
 	2. 建表结构是否合理：包括使用的表引擎，字段，索引，存储过程
 	3. 考虑对表使用：水平分隔，垂直分隔，使用汇总表
-    4. 使用读写分离，负载均衡的方式，来缓解数据库的压力
-    5. 使用内存缓存（redis,memcached），将一部分数据放入内存，减少查询
+    4. 使用读写分离，负载均衡的方式(Nginx的配置文件的upstream字段)，来缓解数据库的压力
+    5. 使用内存缓存（redis,memcached），redis是一个key-value存储系统，可基于内存，亦可持久化的Nosql型的数据库，与memcached相似，但它支持更多的数据类型((string)字符串,(list)链表,(set)集合,(zsort)有序集合,(hash)哈希类型)
     6. 其他的还有：优化sql查询代码，将网页前端静态化，减少查询等
 
 	当数据库访问量很大时，已经明显影响到网站的响应，这个时候，我们可以使用读写分离，负载均衡的方式，来缓解数据库的压力。优化数据库的配置，mysql.ini配置文件。
@@ -182,8 +198,7 @@ Linux：
 	var_dump();(可以用来输出任何内容,输出变量的容，类型或字符串的内容，类型，长度。常用来调试)
 	printf();格式化输出
 	sprintf();(把输出内容存放在变量中,此并不能直接输出,先赋给一个变量，然后再输出变量)
-	var_export ();(返回关于传递给该函数的变量的结构信息，它和var_dump()类似，不同的是其返回的表 示是合法的PHP代码。您可以通过将函数的第二个参数设置为TRUE ，从而返回变量的值。)
-
+	var_export();(返回关于传递给该函数的变量的结构信息，它和var_dump()类似，不同的是其返回的表 示是合法的PHP代码。您可以通过将函数的第二个参数设置为TRUE ，从而返回变量的值。)
 
 13.PHP怎么调试代码？
 	(1)通过输出函数
@@ -236,62 +251,96 @@ Linux：
 
 17.说出PHP处理数组常用的5个函数
 	foreach,for(循环处理数组)
-	range()  快速创建数组
+	range(1,20,2),返回一个数组(1,3,5,7,9,11,13,15,17,19)  快速创建数组
 	array_push()  数组中追加数据，不过也可以直接赋值，这个常用语一次性追加多个值
 	sort()  一维索引排序，安ASCII码从小到大升序
 	asort()  对数组排序，保持索引关系，用于关联数组排序
-	ksort(),krsort()  安索引值排序
+	ksort(),  安索引值排序
+	krsort(), 按索引值逆向排序
 	shuffle()  随机混乱排序
-	array_rand()  随机抽取
-	array_combine()  数组联合
-	array_merge()   数组合并
-	array_key_exists()，in_array()，array_sum()，arry_unique()，key()
-	current(),next(),prev(),end()这个是操作指针的，尽管不常用，但是很多笔试题有
-	is_array()，count(),aizeof()
+	array_rand()  从一个数组中抽取一个数组，随机抽取返回一个数组("sss","sdfsdgf","sfrset")
+	array_combine()  数组联合(用一个数组作为键名，另一个数组作为其值)
+	array_merge()   数组合并(对于键值相同的，会覆盖)
+	array_key_exists()，判断某一个键名，在一个数组中是否存在
+	in_array()，判断某一个元素在某一个数组中是否存在(区分大小写)，参数设置，可以是否严格比较类型。
+	array_sum()，将数组中的所有值的和以整数或浮点数的结果返回
+	array_unique()，移除数组中重复的值
+	key(),回数组中当前单元的键名
+	current(),回数组中当前单元的值
+	next(),指针后移
+	prev(),指针前移
+	end()这个是操作指针的，尽管不常用，但是很多笔试题有
+	is_array()，检测变量是否是数组
+	count(),计算数组中的单元数目或对象中的属性个数
+	sizeof()是count() 的别名
 
 18.说出PHP处理字符串常用的5个函数
 	(1)查找字符位置函数
-	strpos($str,search,[int]):查找search在$str中的第一次位置从int开始；
-	stripos($str,search,[int]):函数返回字符串在另一个字符串中第一次出现的位置。该函数对大小写不敏感
-	strrpos($str,search,[int]):查找search在$str中的最后一次出现的位置从int开始
-	strripos($str,search,[int]):同上，该函数对大小写不敏感
+
+		strpos($str,search,[int]):查找search在$str中的第一次位置从int开始；
+		stripos($str,search,[int]):函数返回search在另一个字符串中第一次出现的位置。该函数对大小写不敏感
+		strrpos($str,search,[int]):查找search在$str中的最后一次出现的位置从int开始
+		strripos($str,search,[int]):同上，该函数对大小写不敏感
+
 	(2)提取子字符串函数（双字节）
-	substr($str,int start[,int length]):从$str中strat位置开始提取[length长度的字符串]。
-	strstr($str1,$str2):从$str1(第一个的位置)搜索$str2并从它开始截取到结束字符串;若没有则返回FALSE。
-	stristr() 功能同strstr，只是不区分大小写。
-	strrchr() 从最后一次搜索到的字符处返回；用处：取路径中文件名
+		substr($str,int start[,int length]):从$str中strat位置开始提取[length长度的字符串]。
+		strstr($str1,$str2):从$str1(第一个的位置搜索$str2并从它开始截取到结束字符串;若没有则返回FALSE。
+		{
+
+
+			$email  = 'name@example.com';
+		    $domain = strstr($email, '@');
+		    echo $domain; // 打印 @example.com
+		    $user = strstr($email, '@', true); // 从 PHP 5.3.0 起
+		    echo $user; // 打印 name
+		    }
+		stristr() 功能同strstr，只是不区分大小写。
+		strrchr() 从最后一次搜索到的字符处返回；用处：取路径中文件名
+
 	(3)替换字符串的PHP字符串函数
-	str_replace(search,replace,$str):从$str中查找search用replace来替换
-	str_ireplace(search,replace,$str):同上，该函数对大小写不敏感
-	strtr($str,search,replace):这个函数中replace不能为"";
+		str_replace(search,replace,$str):从$str中查找search用replace来替换
+		str_ireplace(search,replace,$str):同上，该函数对大小写不敏感
+		
+
 	(4)字符长度
-	int strlen($str);
+
+		int strlen($str);
+
 	(5)比较字符函数
-	int strcmp($str1,$str2):$str1>=<$str2分别为正1,0,-1（字符串比较）
-	strcasecmp() 同上（不分大小写）
-	strnatcmp("4","14") 按自然排序比较字符串
-	strnatcasecmp() 同上，（不区分大小写）
+		int strcmp($str1,$str2):$str1>=<$str2分别为正1,0,-1（字符串比较）
+		strcasecmp() 同上（不分大小写）
+		strnatcmp("4","14") 按自然排序比较字符串
+		strnatcasecmp() 同上，（不区分大小写）
+
 	(6)分割成数组的PHP字符串函数
-	str_split($str,len):把$str按len长度进行分割返回数组
-	split(search,$str[,int]):把$str按search字符进行分割返回数组int是分割几次，后面的将不分割
-	explode(search,$str[,int])把$str按search字符进行分割返回数组int是分割几次，后面的将不分割
-	substr_replace($Str,$rep,$start[,length]):$str原始字符串,$rep替换后的新字符串,$start起始位置,$length替换的长度，该项可选
+		str_split($str,len):把$str按len长度进行分割返回数组
+		split(search,$str[,int]):把$str按search字符进行分割返回数组int是分割几次，后面的将不分割
+		explode(search,$str[,int])把$str按search字符进行分割返回数组int是分割几次，后面的将不分割
+		substr_replace($Str,$rep,$start[,length]):$str原始字符串,$rep替换后的新字符串,$start起始位置,$length替换的长度，该项可选
+
+
 	(7)去除空格
-	ltrim()、rtrim()、trim()
+		
+
+
 	(8)加空格函数
-	chunk_split($str,2):向$str字符里面按2个字符就加入一个空格；
+
+		chunk_split($str,2):向$str字符里面按2个字符就加入一个空格；
+
 	(9)html代码相关函数
-	htmlspecialchars($str[,参数]):页面正常输出HTML代码参数，是转换方式
+
+		htmlspecialchars($str[,参数]):页面正常输出HTML代码参数，是转换方式
+
 	(10)字符串大小写以及反转
-	strrev  反转字符串
-	strtolower($str): 字符串转换为小写
-	strtoupper($str): 字符串转换为大写
-	ucfirst($str): 将函数的第一个字符转换为大写
-	ucwords($str): 将每个单词的首字母转换为大写
-	addslashes($str)：使str内单引号（'）、双引号（"）、反斜线（\）与 NULL字符串转换为\',\",\\。
-	stripslashes(): 去除字符串中的反斜杠
-	magic_quotes_gpc = On :自动对 get，post，cookie的内容进行转义
-	get_magic_quotes_gpc（）:检测是否打开magic_quotes_gpc
+		strrev  反转字符串
+		strtolower($str): 字符串转换为小写
+		strtoupper($str): 字符串转换为大写
+		ucfirst($str): 将函数的第一个字符转换为大写
+		ucwords($str): 将每个单词的首字母转换为大写
+		addslashes($str)：使str内单引号（'）、双引号（"）、反斜线（\）与 NULL字符串转换为\',\",\\。
+		stripslashes(): 去除字符串中的反斜杠
+		magic_quotes_gpc = On :自动对 get，post，cookie的内容进行转义
+		get_magic_quotes_gpc（）:检测是否打开magic_quotes_gpc
 
 19.PHP的魔法函数，魔法变量有哪些？
 	魔法函数：
